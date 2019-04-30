@@ -2,7 +2,18 @@ import mathGen from '../../../lib/math-generator'
 
 describe('模拟完整试卷输出', ()=> {
     //因为有随机数这里会暴力测试
-    
+    for(var i=0;i<25;i++) {
+        mathGen.generateFormula(2,mathGen.operator.add,2,2,2,{
+            ignoreNegativeResults:true,
+            showResults:true,
+            showVerboseLog:true
+        });
+        mathGen.generateFormula(2,mathGen.operator.subtract,2,1,2,{
+            ignoreNegativeResults:true,
+            showResults:true,
+            showVerboseLog:true
+        });
+    }
 })
 
 describe('指定位数的数字生成测试', ()=> {
@@ -50,11 +61,18 @@ describe('算式生成测试', ()=> {
     })
 
     it('获取算式字符串', ()=> {
-        expect(mathGen._stringFormula(1,mathGen.operator.add),1).toBe('1 + 1 = ');
-        expect(mathGen._stringFormula(1,mathGen.operator.subtract),1).toBe('1 - 1 = ');
-        expect(mathGen._stringFormula(1,mathGen.operator.multiply),1).toBe('1 x 1 = ');
-        expect(mathGen._stringFormula(1,mathGen.operator.divide),1).toBe('1 ÷ 1 = ');
+        expect(mathGen._stringFormula(1,mathGen.operator.add,1)).toBe('1 + 1 = ');
+        expect(mathGen._stringFormula(1,mathGen.operator.subtract,1)).toBe('1 - 1 = ');
+        expect(mathGen._stringFormula(1,mathGen.operator.multiply,1)).toBe('1 x 1 = ');
+        expect(mathGen._stringFormula(1,mathGen.operator.divide,1)).toBe('1 ÷ 1 = ');
     })
 
+    it('获取算式结果值', ()=> {
+        expect(mathGen._filterByCondition(1,mathGen.operator.subtract,2,{ignoreNegativeResults:true}).lVal).toBe(2);
+        expect(mathGen._filterByCondition(1,mathGen.operator.subtract,2,{ignoreNegativeResults:true}).rVal).toBe(1);
+        expect(mathGen._filterByCondition(1,mathGen.operator.subtract,2,0).lVal).toBe(1);
+        expect(mathGen._filterByCondition(1,mathGen.operator.subtract,2,0).rVal).toBe(2);
+    })
+    
 })
   

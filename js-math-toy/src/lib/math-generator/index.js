@@ -7,27 +7,55 @@ module.exports = {
         divide:3
     },
 
-    generateFormula: function(leftDigits,operator,rightDigits,minResultsDigits,maxResultsDigits) {
+    flag: {
+        ignoreNegativeResults:  false,//忽略负数结果
+        showResults:            false,//显示计算结果
+        showVerboseLog:         false,//显示中间日志结果
+    },
 
-        var isInRangeOfDigits = false;
+    generateFormula: function(leftDigits,operator,rightDigits,minResultsDigits,maxResultsDigits,flags) {
         var returnFormula = '';
+        var MaxCalcTimes = 100;
+        var calcTimes = 0;
 
-        while(!isInRangeOfDigits) {
-            var leftInteger = this._randomIntegerInDigits(leftDigits);
-            var rightInteger = this._randomIntegerInDigits(rightDigits);
-            var resultInteger = this._resultInteger(leftInteger,operator,rightInteger);
+        while(++calcTimes <= MaxCalcTimes) {
+            var filterLR = this._filterByCondition(this._randomIntegerInDigits(leftDigits), operator, this._randomIntegerInDigits(rightDigits), flags);
+            var resultInteger = this._resultInteger(filterLR.lVal,operator,filterLR.rVal);
             var resultIntegerDigits = this._digitsInValueInteger(resultInteger);
 
-            console.log(leftInteger + ' ' + operator + ' ' + rightInteger + ' = ' +resultInteger);
-
             if (resultIntegerDigits >= minResultsDigits && resultIntegerDigits <= maxResultsDigits) {
-                isInRangeOfDigits = true;
-                returnFormula = this._stringFormula(leftInteger,operator,rightInteger);
+                returnFormula = this._stringFormula(filterLR.lVal,operator,filterLR.rVal);
+                if (flags.showResults) {
+                    returnFormula += resultInteger;
+                }
+
+                if(flags.showVerboseLog) console.log(returnFormula);
+                break;
             }
         }
 
-        console.log('returnFormula: ' + returnFormula);
+        if (flags.showVerboseLog && calcTimes > MaxCalcTimes) console.log('error pararms to generate formula');
+
         return returnFormula;
+    },
+
+    //根据标志位过滤结果
+    _filterByCondition: function(leftInteger,operator,rightInteger,flags) {
+        var lVal = leftInteger;
+        var rVal = rightInteger;
+
+        if (operator === this.operator.subtract && (flags.ignoreNegativeResults)) {
+            if (lVal < rVal) {
+                var temp = lVal;
+                lVal = rVal;
+                rVal = temp;
+            }
+        }
+
+        return {
+            lVal:lVal,
+            rVal:rVal
+        };
     },
 
     //位数生成
@@ -107,22 +135,21 @@ module.exports = {
     _stringFormula: function(leftInteger,operator,rightInteger) {
         var returnFormula = '';
         if(operator === this.operator.add) {
-            returnFormula = leftInteger + ' + ' + rightInteger + ' =';
+            returnFormula = leftInteger + ' + ' + rightInteger + ' = ';
         }
         else if (operator === this.operator.subtract) {
-            returnFormula = leftInteger + ' - ' + rightInteger + ' =';
+            returnFormula = leftInteger + ' - ' + rightInteger + ' = ';
         }
         else if (operator === this.operator.multiply) {
-            returnFormula = leftInteger + ' x ' + rightInteger + ' =';
+            returnFormula = leftInteger + ' x ' + rightInteger + ' = ';
         }
         else if (operator === this.operator.divide) {
-            returnFormula = leftInteger + ' ÷ ' + rightInteger + ' =';
+            returnFormula = leftInteger + ' ÷ ' + rightInteger + ' = ';
         }
         else {
             returnFormula = '';
         }
         return returnFormula;
     }
-
 }
 
