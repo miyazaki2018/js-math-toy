@@ -1,17 +1,20 @@
 import mathGen from '../../../lib/math-generator'
 
 describe('模拟完整试卷输出', ()=> {
+
     //因为有随机数这里会暴力测试
-    for(var i=0;i<25;i++) {
-        mathGen.generateFormula(2,mathGen.operator.add,2,2,2,{
-            ignoreNegativeResults:true,
-            showResults:true,
-            showVerboseLog:true
-        });
-        mathGen.generateFormula(2,mathGen.operator.subtract,2,1,2,{
-            ignoreNegativeResults:true,
-            showResults:true,
-            showVerboseLog:true
+    for(var i=0; i<0; i++) {
+        mathGen.generateFormula({
+            leftDigits: 2,
+            operator: mathGen.operator.add,
+            rightDigits: 2,
+            minResultsDigits: 1,
+            maxResultsDigits: 2,
+            flags: {
+                ignoreNegativeResults:true,
+                showResults:true,
+                showVerboseLog:false
+            }
         });
     }
 })
