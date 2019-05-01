@@ -8,33 +8,42 @@ module.exports = {
     },
 
     flag: {
-        ignoreNegativeResults:  false,//忽略负数结果
+        ignoreNegativeResults:  true,//忽略负数结果
         showResults:            false,//显示计算结果
         showVerboseLog:         false,//显示中间日志结果
     },
 
-    generateFormula: function(leftDigits,operator,rightDigits,minResultsDigits,maxResultsDigits,flags) {
+    config: {
+        leftDigits: 1,
+        operator: 0,//add
+        rightDigits: 1,
+        minResultsDigits: 1,
+        maxResultsDigits: 2,
+        flags:{ignoreNegativeResults: true}
+    },
+
+    generateFormula: function(config) {
         var returnFormula = '';
         var MaxCalcTimes = 100;
         var calcTimes = 0;
 
         while(++calcTimes <= MaxCalcTimes) {
-            var filterLR = this._filterByCondition(this._randomIntegerInDigits(leftDigits), operator, this._randomIntegerInDigits(rightDigits), flags);
-            var resultInteger = this._resultInteger(filterLR.lVal,operator,filterLR.rVal);
+            var filterLR = this._filterByCondition(this._randomIntegerInDigits(config.leftDigits), config.operator, this._randomIntegerInDigits(config.rightDigits), config.flags);
+            var resultInteger = this._resultInteger(filterLR.lVal,config.operator,filterLR.rVal);
             var resultIntegerDigits = this._digitsInValueInteger(resultInteger);
 
-            if (resultIntegerDigits >= minResultsDigits && resultIntegerDigits <= maxResultsDigits) {
-                returnFormula = this._stringFormula(filterLR.lVal,operator,filterLR.rVal);
-                if (flags.showResults) {
+            if (resultIntegerDigits >= config.minResultsDigits && resultIntegerDigits <= config.maxResultsDigits) {
+                returnFormula = this._stringFormula(filterLR.lVal,config.operator,filterLR.rVal);
+                if (config.flags.showResults) {
                     returnFormula += resultInteger;
                 }
 
-                if(flags.showVerboseLog) console.log(returnFormula);
+                if(config.flags.showVerboseLog) console.log(returnFormula);
                 break;
             }
         }
 
-        if (flags.showVerboseLog && calcTimes > MaxCalcTimes) console.log('error pararms to generate formula');
+        if (config.flags.showVerboseLog && calcTimes > MaxCalcTimes) console.log('error pararms to generate formula');
 
         return returnFormula;
     },
