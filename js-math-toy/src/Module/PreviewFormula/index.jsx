@@ -15,8 +15,38 @@ class PreviewFormula extends React.Component {
       super(props);
       this.state = { formulas:[]};
     }
-  
-    genFormula() {
+
+    componentDidMount() {
+        var formulas = this._genForumlas(this.props.row, this.props.column);
+        this.setState({
+            formulas: formulas
+        })
+    }
+
+    render() {
+        const formulas = this.state.formulas;
+        return (
+            <div>
+                <table width="100%" >
+                    <tbody>{this._renderTable(formulas)}</tbody>
+                </table>
+            </div>
+        );
+    }
+
+    _genForumlas(row, column) {
+        var formulas = [];
+        for(var i=0; i<row; i++) {
+            var rowContent = []
+            for(var j=0; j<column; j++) {
+                rowContent.push(this._genFormula())
+            }
+            formulas.push(rowContent)
+        }
+        return formulas;
+    }
+
+    _genFormula() {
         var operator = MG.operator.add;
         if (Math.floor(Math.random() * 2)) {operator = MG.operator.subtract;}
 
@@ -32,26 +62,7 @@ class PreviewFormula extends React.Component {
         });
     }
 
-    componentDidMount() {
-        var formulas = [];
-        for(var i=0; i<this.props.row; i++) {
-            var rowContent = []
-            for(var j=0; j<this.props.column; j++) {
-                rowContent.push(this.genFormula())
-            }
-            formulas.push(rowContent)
-        }
-        this.setState({
-            formulas: formulas
-        })
-
-    }
-  
-    componentWillUnmount() {
-      
-    }
-
-    renderRow(rowContent) {
+    _renderRow(rowContent) {
         var rowMarup = rowContent.map((columnContent) => {
             console.log('columnContent:'+columnContent)
             return (
@@ -61,24 +72,13 @@ class PreviewFormula extends React.Component {
         return rowMarup;
     }
 
-    renderTable(formulas) {
+    _renderTable(formulas) {
         var formulasMarkup = formulas.map((rowContent) => {
             return (
-                <tr key={rowContent}>{this.renderRow(rowContent)}</tr>
+                <tr key={rowContent}>{this._renderRow(rowContent)}</tr>
             );
         });
         return formulasMarkup;
-    }
-  
-    render() {
-        const formulas = this.state.formulas;
-        return (
-            <div>
-                <table width="100%" >
-                    <tbody>{this.renderTable(formulas)}</tbody>
-                </table>
-            </div>
-        );
     }
   }
 export default PreviewFormula;
