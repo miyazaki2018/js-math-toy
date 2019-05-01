@@ -50,27 +50,32 @@ class PreviewFormula extends React.Component {
     componentWillUnmount() {
       
     }
+
+    renderRow(rowContent) {
+        var rowMarup = rowContent.map((columnContent) => {
+            console.log('columnContent:'+columnContent)
+            return (
+                <td key={columnContent}>{columnContent}</td>
+            )
+        });
+        return rowMarup;
+    }
+
+    renderTable(formulas) {
+        var formulasMarkup = formulas.map((rowContent) => {
+            return (
+                <tr key={rowContent}>{this.renderRow(rowContent)}</tr>
+            );
+        });
+        return formulasMarkup;
+    }
   
     render() {
         const formulas = this.state.formulas;
-
-        var formulasMarkup = formulas.map((rowContent) => {
-            var rowMarup = rowContent.map((columnContent) => {
-                console.log('columnContent:'+columnContent)
-                return (
-                    <td key={columnContent}>{columnContent}</td>
-                )
-            });
-
-            return (
-                <tr key={rowContent}>{rowMarup}</tr>
-            );
-        });
-
         return (
             <div>
-                <table width="100%" height="100%">
-                    <tbody>{formulasMarkup}</tbody>
+                <table width="100%" >
+                    <tbody>{this.renderTable(formulas)}</tbody>
                 </table>
             </div>
         );
